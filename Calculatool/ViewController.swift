@@ -10,16 +10,53 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    @IBOutlet weak var displayPanel: UILabel!
+    
+    var userIsEditing = false;
+    
+    var brain = CalculatoolBrains()
+    
+    @IBAction func append(_ sender: UIButton) {
+        if userIsEditing {
+            displayPanel.text! = displayPanel.text! + sender.currentTitle!
+        } else {
+            userIsEditing = true;
+            displayPanel.text! = sender.currentTitle!
+        }
     }
+    
+    @IBAction func operate(_ sender: UIButton) {
+        if userIsEditing {
+            enter()
+        }
+        if let operand = sender.currentTitle {
+            if let result = brain.performOperation(symbol: operand) {
+                displayDouble = result
+            } else {
+                displayDouble = 0
+            }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        }
     }
-
+    
+    @IBAction func enter() {
+        userIsEditing = false;
+        if let result = brain.pushOperant(operant: displayDouble) {
+            displayDouble = result
+        } else {
+            displayDouble = 0
+        }
+    }
+    
+    var displayDouble : Double {
+        get {
+            return NumberFormatter().number(from: displayPanel.text!)!.doubleValue
+        }
+        set {
+            displayPanel.text! = "\(newValue)"
+            userIsEditing = false;
+        }
+    }
 
 }
 
